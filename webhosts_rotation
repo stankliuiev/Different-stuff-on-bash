@@ -1,0 +1,44 @@
+#!/bin/bash
+#webhosts rsync rotation script
+#bash -x
+backupdir=$'/home/varg/cpanel3.webhost.ie/'
+ls -lat $backupdir > /tmp/backups2_list.txt
+grep 'rsync_old.' /tmp/backups2_list.txt | awk '{print $9}' > /tmp/backups2_list1.txt
+
+#preparation part ==========================================================
+#current date
+currentdate=$(date "+%m-%d-%Y")
+#calculate 6 month back for oldest backup
+halfyearago=$(date "+%m-%d-%Y" -d "6 month ago")
+
+#check the oldest backup
+oldest=$(grep 'rsync_old.' /tmp/backups2_list1.txt |  head -n1 | tr -d 'rsync_old.')
+
+#Delete oldest backup
+if 
+    [ "$halfyearago" == "$oldest" ]
+then
+    find $backupdir -type d -name "*$oldest" -exec rm -rf {} +
+fi
+
+#check newest backup
+newest=$(grep 'rsync_old.' /tmp/backups2_list1.txt | tail -n1 | tr -d 'rsync_old.')
+
+#starting actual rotation ==========================================================
+
+ls -lat > /tmp/backups2_list.txt
+grep 'rsync_old.' /tmp/backups2_list.txt | awk '{print $9}' > /tmp/backups2_list1.txt
+#count backups
+backupscount=$(cat /tmp/backups2_list1.txt | wc -l)
+#define penultimate backup to delete
+penultimate=$(sed -n 2p /tmp/backups2_list1.txt)
+
+if
+    [ "$backupscount" -gt 3 ]
+then
+    find $backupdir -type d -name "$penultimate" -exec rm -rf {} +
+fi
+
+#clean temporary file
+rm -f /tmp/backups2_list.txt
+rm -f /tmp/backups2_list1.txt
