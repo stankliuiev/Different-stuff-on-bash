@@ -1,0 +1,20 @@
+#!/bin/bash
+#run this script from nksupport nagios container only!!!
+#Please take a backup first!!!
+
+cd etc/nagios3/clients.d/
+
+#gathering main list of services with noncrit group
+grep -A3 'BACKUP' -n *.cfg | grep -B3 nksupport_noncrit > results.txt
+
+#format text
+#grep BACKUP results.txt | awk '{print $1}' | tr -d ':#' > results1.txt
+#sed 's/.\{8\}/& /g' results1.txt > results2.txt
+grep LOAD results.txt | awk '{print $1}' | tr -d ':#' | sed 's/.\{8\}/& /g' > results1.txt
+
+
+#changing required words in all configs in the directory
+while read -r line; do
+	IFS=" " read -r filename linenumber <<< "$line" 
+	sed -e "$linenumber s/BACKUP/noncrit_BACKUP/" -i $filename
+    done < results1.txt
