@@ -1,6 +1,6 @@
 #!/bin/bash
 #wrote by Stan Kliuiev 2022.10.14
-#the owner of this file must be postgres 
+#the owner:group of this file must be postgres 
 #set -x
 #Replace pgsql_DATADIR  with your actual psql datadir location
 
