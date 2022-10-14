@@ -1,5 +1,6 @@
 #!/bin/bash
 #set -x
+#Replace pgsql_DATADIR  with your actual psql datadir location
 
 PIDFILE=/tmp/backup.pid
 #DIR=`date +%F_%H-%M`;
@@ -14,11 +15,11 @@ if [ -f $PIDFILE ]; then
 fi
 
 #simple rotation part, it will remove directories with backups that are older than 10 days.
-/usr/bin/find /var/lib/pgsql/12/backups/ -type d -name '20*' -mtime +10 -exec rm -fv {} \;
+/usr/bin/find /var/lib/pgsql_DATADIR/backups/ -type d -name '20*' -mtime +10 -exec rm -fv {} \;
 
 mkdir /var/lib/pgsql/backups/$DIR;
 
-pg_basebackup -Ft -z -v -D /var/lib/pgsql/12/backups/$DIR
+pg_basebackup -Ft -z -v -D /var/lib/pgsql_DATADIR/backups/$DIR
 
 #rsync -av /var/lib/pgsql/backups/ backupnode:/backups/ --bwlimit=5M
 
