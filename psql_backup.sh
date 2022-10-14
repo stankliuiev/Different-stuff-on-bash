@@ -19,7 +19,8 @@ fi
 rm -f /tmp/backup.txt
 
 #simple rotation part, it will remove directories with backups that are older than 10 days.
-/usr/bin/find /var/lib/pgsql_DATADIR/backups/ -type d -name '20*' -mtime +10 -exec rm -fv {} \;
+#/usr/bin/find /var/lib/pgsql_DATADIR/backups/ -type d -name '20*' -mtime +10 -exec rm -rf {} \;
+/usr/bin/find /var/lib/pgsql/12/backup/ -type d -ctime +4 -exec rm -rf {} \;
 
 mkdir /var/lib/pgsql/backups/$DIR;
 
