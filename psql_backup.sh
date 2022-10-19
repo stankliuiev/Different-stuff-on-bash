@@ -16,16 +16,14 @@ if [ -f $PIDFILE ]; then
         else echo $$ > $PIDFILE
 fi
 
-rm -f /tmp/backup.txt
-
 #simple rotation part, it will remove directories with backups that are older than 10 days.
-#/usr/bin/find /var/lib/pgsql_DATADIR/backups/ -type d -name '20*' -mtime +10 -exec rm -rf {} \;
 /usr/bin/find /var/lib/pgsql/12/backup/ -type d -ctime +4 -exec rm -rf {} \;
 
 mkdir /var/lib/pgsql/backups/$DIR;
 
 pg_basebackup -Ft -z -v -D /var/lib/pgsql_DATADIR/backups/$DIR
 
+#Syn to remote host or vault
 #rsync -av /var/lib/pgsql/backups/ backupnode:/backups/ --bwlimit=5M
 
 #backups list for nrpe check
